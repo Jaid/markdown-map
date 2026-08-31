@@ -182,3 +182,53 @@ test('tree input treats missing priority as zero', () => {
   })
   expect(markdown.toString()).toBe('# Second\n\nSecond content\n\n# First\n\nFirst content')
 })
+test('renameSection preserves sibling order and subtree', () => {
+  const markdown = (new MarkdownMap)
+    .extendSection('First', 'First content')
+    .extendSection(['Second', 'Child'], 'Child content')
+    .extendSection('Third', 'Third content')
+    .renameSection('Second', 'Renamed')
+  expect(markdown.toString()).toBe('# First\n\nFirst content\n\n# Renamed\n\n## Child\n\nChild content\n\n# Third\n\nThird content')
+})
+test('renameSection supports nested sections', () => {
+  const markdown = (new MarkdownMap)
+    .extendSection(['Project', 'Development', 'Testing'], 'Testing notes')
+    .renameSection(['Project', 'Development'], 'Engineering')
+  expect(markdown.toString()).toBe('# Project\n\n## Engineering\n\n### Testing\n\nTesting notes')
+})
+test('renameSection rejects sibling collisions', () => {
+  const markdown = (new MarkdownMap)
+    .extendSection('First', 'First content')
+    .extendSection('Second', 'Second content')
+  expect(() => markdown.renameSection('First', 'Second')).toThrow('Section already exists: Second')
+})
+test('get returns a detached section object representation', () => {
+  const markdown = new MarkdownMap({
+    Project: {
+      content: ['Overview'],
+      sections: {
+        Usage: {
+          content: ['Usage notes'],
+        },
+      },
+    },
+  })
+  const project = markdown.get('Project')
+  expect(project).toEqual({
+    content: ['Overview'],
+    priority: 0,
+    sections: {
+      Usage: {
+        content: ['Usage notes'],
+        priority: 0,
+        sections: {},
+      },
+    },
+  })
+  project?.content?.push('External mutation')
+  project?.sections?.Usage.content?.push('External child mutation')
+  expect(markdown.toString()).toBe('# Project\n\nOverview\n\n## Usage\n\nUsage notes')
+})
+test('get returns undefined for a missing section', () => {
+  expect((new MarkdownMap).get('Missing')).toBeUndefined()
+})

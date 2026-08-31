@@ -1,10 +1,11 @@
 import type {Markdown} from '#src/lib/types/Markdown.ts'
-import type {ResolvedMarkdownMapSection, ResolvedMarkdownMapTree} from '#src/lib/types/MarkdownMapSection.ts'
+import type {MarkdownMapSection, ResolvedMarkdownMapSection, ResolvedMarkdownMapTree} from '#src/lib/types/MarkdownMapSection.ts'
 import type {RenderOptions} from '#src/lib/types/RenderOptions.ts'
 import type {RenderSectionOptions} from '#src/lib/types/RenderSectionOptions.ts'
 import type {OptionalSection, Section} from '#src/lib/types/Section.ts'
 import type {Arrayable} from 'type-fest'
 
+import cloneSection from '#src/lib/cloneSection.ts'
 import cloneTree from '#src/lib/cloneTree.ts'
 import createSection from '#src/lib/createSection.ts'
 import toArray from '#src/lib/toArray.ts'
@@ -66,6 +67,38 @@ export default class MarkdownMap {
     }
     const target = this.#ensureSection(section)
     target.content.push(...toArray(content))
+    return this
+  }
+
+  get(section: Section): MarkdownMapSection | undefined {
+    const target = this.#getSection(section)
+    return target ? cloneSection(target) : undefined
+  }
+
+  renameSection(section: Section, newName: string) {
+    const path = this.#normalizePath(section)
+    const sectionName = path.pop()!
+    let tree = this.#tree
+    for (const name of path) {
+      const target = Object.hasOwn(tree, name) ? tree[name] : undefined
+      if (!target) {
+        return this
+      }
+      tree = target.sections
+    }
+    if (!Object.hasOwn(tree, sectionName) || sectionName === newName) {
+      return this
+    }
+    if (Object.hasOwn(tree, newName)) {
+      throw new TypeError(`Section already exists: ${newName}`)
+    }
+    const entries = Object.entries(tree)
+    for (const name of Object.keys(tree)) {
+      delete tree[name]
+    }
+    for (const [name, target] of entries) {
+      tree[name === sectionName ? newName : name] = target
+    }
     return this
   }
 
