@@ -13,6 +13,10 @@ import renderMarkdown from '#src/renderMarkdown.ts'
 import renderMarkdownSection from '#src/renderSection.ts'
 
 export default class MarkdownMap {
+  static render(input: Markdown, options: RenderOptions = {}) {
+    return new MarkdownMap(input).render(options)
+  }
+
   readonly #orphanContent: Array<string>
   readonly #tree: MarkdownMapTree
 

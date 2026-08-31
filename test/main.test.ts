@@ -139,3 +139,16 @@ test('renderSection can omit the selected section header', () => {
     .extendSection(['Project', 'Development', 'Testing'], 'Testing notes')
   expect(markdown.renderSection(['Project', 'Development'], {header: false})).toBe('Development notes\n\n### Testing\n\nTesting notes')
 })
+test('static render is a shortcut for Markdown input', () => {
+  const input = 'Introduction\n\n# Project\n\nOverview'
+  expect(MarkdownMap.render(input, {startDepth: 2})).toBe('Introduction\n\n## Project\n\nOverview')
+})
+test('static render accepts tree input', () => {
+  expect(MarkdownMap.render({
+    Project: {
+      content: ['Overview'],
+      priority: 0,
+      sections: {},
+    },
+  })).toBe('# Project\n\nOverview')
+})
