@@ -1,5 +1,5 @@
 import type {Markdown} from '#src/lib/types/Markdown.ts'
-import type {MarkdownMapSection, MarkdownMapTree} from '#src/lib/types/MarkdownMapSection.ts'
+import type {ResolvedMarkdownMapSection, ResolvedMarkdownMapTree} from '#src/lib/types/MarkdownMapSection.ts'
 import type {RenderOptions} from '#src/lib/types/RenderOptions.ts'
 import type {RenderSectionOptions} from '#src/lib/types/RenderSectionOptions.ts'
 import type {OptionalSection, Section} from '#src/lib/types/Section.ts'
@@ -18,7 +18,7 @@ export default class MarkdownMap {
   }
 
   readonly #orphanContent: Array<string>
-  readonly #tree: MarkdownMapTree
+  readonly #tree: ResolvedMarkdownMapTree
 
   constructor(initial: Markdown = {}) {
     if (typeof initial === 'string') {
@@ -99,7 +99,7 @@ export default class MarkdownMap {
   #ensureSection(section: Section) {
     const path = this.#normalizePath(section)
     let tree = this.#tree
-    let target: MarkdownMapSection | undefined
+    let target: ResolvedMarkdownMapSection | undefined
     for (const name of path) {
       target = Object.hasOwn(tree, name) ? tree[name] : undefined
       if (!target) {
@@ -114,7 +114,7 @@ export default class MarkdownMap {
   #getSection(section: Section) {
     const path = this.#normalizePath(section)
     let tree = this.#tree
-    let target: MarkdownMapSection | undefined
+    let target: ResolvedMarkdownMapSection | undefined
     for (const name of path) {
       target = Object.hasOwn(tree, name) ? tree[name] : undefined
       if (!target) {

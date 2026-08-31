@@ -152,3 +152,33 @@ test('static render accepts tree input', () => {
     },
   })).toBe('# Project\n\nOverview')
 })
+test('tree input applies defaults for omitted section properties', () => {
+  const markdown = new MarkdownMap({
+    Project: {
+      sections: {
+        Usage: {
+          content: ['Usage notes'],
+        },
+        Empty: {},
+      },
+    },
+  })
+  expect(markdown.toString()).toBe('# Project\n\n## Usage\n\nUsage notes')
+  expect(markdown.render({omitEmpty: false})).toBe('# Project\n\n## Usage\n\nUsage notes\n\n## Empty')
+})
+test('tree input with omitted sections remains extensible', () => {
+  const markdown = new MarkdownMap({Project: {}})
+    .extendSection(['Project', 'Usage'], 'Usage notes')
+    .setSectionPriority(['Project', 'Usage'], 2)
+  expect(markdown.toString()).toBe('# Project\n\n## Usage\n\nUsage notes')
+})
+test('tree input treats missing priority as zero', () => {
+  const markdown = new MarkdownMap({
+    First: {content: ['First content']},
+    Second: {
+      content: ['Second content'],
+      priority: 1,
+    },
+  })
+  expect(markdown.toString()).toBe('# Second\n\nSecond content\n\n# First\n\nFirst content')
+})

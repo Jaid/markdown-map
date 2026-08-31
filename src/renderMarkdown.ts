@@ -1,4 +1,4 @@
-import type {MarkdownMapTree} from '#src/lib/types/MarkdownMapSection.ts'
+import type {ResolvedMarkdownMapTree} from '#src/lib/types/MarkdownMapSection.ts'
 import type {RenderOptions} from '#src/lib/types/RenderOptions.ts'
 
 import flattenString from 'flatten-string'
@@ -20,7 +20,7 @@ export const resolveRenderOptions = (options: RenderOptions = {}): Required<Rend
   return resolvedOptions
 }
 
-export const renderTree = (tree: MarkdownMapTree, depth: number, options: Required<RenderOptions>): Array<string> => {
+export const renderTree = (tree: ResolvedMarkdownMapTree, depth: number, options: Required<RenderOptions>): Array<string> => {
   return Object.entries(tree)
     .filter(([, section]) => !options.omitEmpty || section.content.length > 0 || Object.keys(section.sections).length > 0)
     .toSorted(([, sectionA], [, sectionB]) => sectionB.priority - sectionA.priority)
@@ -34,7 +34,7 @@ export const renderTree = (tree: MarkdownMapTree, depth: number, options: Requir
     })
 }
 
-export default (tree: MarkdownMapTree, orphanContent: Array<string>, options: RenderOptions = {}) => {
+export default (tree: ResolvedMarkdownMapTree, orphanContent: Array<string>, options: RenderOptions = {}) => {
   const resolvedOptions = resolveRenderOptions(options)
   const sections = renderTree(tree, resolvedOptions.startDepth, resolvedOptions)
   if (resolvedOptions.contentPlacement === 'bottom') {

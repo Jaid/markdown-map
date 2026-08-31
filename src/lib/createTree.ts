@@ -1,5 +1,5 @@
-import type {MarkdownMapTree} from '#src/lib/types/MarkdownMapSection.ts'
+import type {ResolvedMarkdownMapTree} from '#src/lib/types/MarkdownMapSection.ts'
 
-export default (): MarkdownMapTree => {
-  return Object.create(null) as MarkdownMapTree
+export default (): ResolvedMarkdownMapTree => {
+  return Object.create(null) as ResolvedMarkdownMapTree
 }

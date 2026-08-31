@@ -1,11 +1,11 @@
-import type {MarkdownMapSection} from '#src/lib/types/MarkdownMapSection.ts'
+import type {ResolvedMarkdownMapSection} from '#src/lib/types/MarkdownMapSection.ts'
 import type {RenderSectionOptions} from '#src/lib/types/RenderSectionOptions.ts'
 
 import flattenString from 'flatten-string'
 
 import {renderTree, resolveRenderOptions} from '#src/renderMarkdown.ts'
 
-export default (name: string, section: MarkdownMapSection, options: RenderSectionOptions = {}) => {
+export default (name: string, section: ResolvedMarkdownMapSection, options: RenderSectionOptions = {}) => {
   const {header = true, ...renderOptions} = options
   const resolvedOptions = resolveRenderOptions(renderOptions)
   const depth = resolvedOptions.startDepth

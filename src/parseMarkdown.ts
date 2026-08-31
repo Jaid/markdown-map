@@ -1,4 +1,4 @@
-import type {MarkdownMapSection, MarkdownMapTree} from '#src/lib/types/MarkdownMapSection.ts'
+import type {ResolvedMarkdownMapSection, ResolvedMarkdownMapTree} from '#src/lib/types/MarkdownMapSection.ts'
 
 import createSection from '#src/lib/createSection.ts'
 import createTree from '#src/lib/createTree.ts'
@@ -6,7 +6,7 @@ import splitLines from '#src/lib/splitLines.ts'
 
 export type ParsedMarkdown = {
   orphanContent: Array<string>
-  tree: MarkdownMapTree
+  tree: ResolvedMarkdownMapTree
 }
 
 const getContentPieces = (lines: Array<string>): Array<string> => {
@@ -33,8 +33,8 @@ const getContentPieces = (lines: Array<string>): Array<string> => {
 export default (markdown: string): ParsedMarkdown => {
   const orphanContent: Array<string> = []
   const tree = createTree()
-  const stack: Array<MarkdownMapSection> = []
-  let currentSection: MarkdownMapSection | undefined
+  const stack: Array<ResolvedMarkdownMapSection> = []
+  let currentSection: ResolvedMarkdownMapSection | undefined
   let contentLines: Array<string> = []
   let fence: {
     character: string
